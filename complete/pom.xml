@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.springframework</groupId>
+    <groupId>hello</groupId>
     <artifactId>gs-spring-boot-docker</artifactId>
     <version>0.1.0</version>
     <packaging>jar</packaging>
@@ -13,12 +13,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.0.RELEASE</version>
+        <version>2.1.4.RELEASE</version>
         <relativePath />
     </parent>
 
-    <properties>
-        <docker.image.prefix>springio</docker.image.prefix>
+    <properties>   
+		<docker.registry>aarontransue</docker.registry>
+        <!-- <docker.image.prefix>aarontransue</docker.image.prefix> -->
         <java.version>1.8</java.version>
     </properties>
 
@@ -27,6 +28,40 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+            	<groupId>io.fabric8</groupId>
+            	<artifactId>docker-maven-plugin</artifactId>
+            	<configuration>
+            		<verbose>true</verbose>
+            		<registry>${docker.registry}</registry>
+            		<dockerFileDir>src/main/docker</dockerFileDir>
+            		<images>
+            			<image>
+            				<name>${docker.registry}/dockboot:${project.version}</name>
+            				<build>
+            					<dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+            					<tags>
+            						<tag>${project.version}</tag>
+            						<tag>latest</tag>
+            					</tags>
+            					
+            					<assembley>
+            						<inline>
+            							<dependencySets>
+            								<dependecySet>
+            									<includes>
+            										<include>${project.groupid}:${project.artifactId}</include>
+            									</includes>
+            									<outputFileNameMapping>app.jar</outputFileNameMapping>
+            								</dependecySet>
+            							</dependencySets>
+            						</inline>
+            					</assembley>
+            				</build>
+            			</image>
+            		</images>
+            	</configuration>
             </plugin>
         </plugins>
     </build>
